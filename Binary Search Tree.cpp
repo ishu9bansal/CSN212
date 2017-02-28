@@ -46,22 +46,56 @@ node* search(node* x, int k){
 	if(k<x->d)	return search(x->l,k);
 	else		return search(x->r,k);
 }
+node* minimum(node* x){
+	while(x&&x->l)	x = x->l;
+	return x;
+}
+node* maximum(node* x){
+	while(x&&x->r)	x = x->r;
+	return x;
+}
+node* successor(node* x){
+	if(!x)	return x;
+	if(x->r)	return minimum(x->r);
+	node* y = x->p;
+	while(y&&x==y->r){
+		x = y;	y = y->p;
+	}
+	return y;
+}
 int main() {
 	node* tree = NULL;
 	int c;
 	for(int i=0; i<20; i++){
 		c = rand()%100;
-		insert(tree,c);
-		cout<<c<<' ';
+		insert(tree,c);		// random BST generation
+		cout<<c<<' ';		// random no.s output order
 	}
 	cout<<endl;
-	inorder(tree);
+	inorder(tree);			// tree inorder
 	cout<<endl;
-	preorder(tree);
+	preorder(tree);			// tree preorder
 	cout<<endl;
+	
 	node* search_result = search(tree,c);
 	cout<<search_result<<endl;
 	cout<<search_result->d<<endl;
 	cout<<search(tree,50)<<endl;
+	
+	node* min = minimum(tree);
+	node* max = maximum(tree);
+	
+	cout<<min->d<<endl;		// 15
+	cout<<max->d<<endl;		// 93
+	
+	cout<<minimum(max)->d<<endl;	// 86
+	cout<<minimum(min)->d<<endl;	// 15
+	
+	cout<<successor(search_result)->d<<endl;	// 40
+	cout<<successor(tree)->d<<endl;				// 86
+	cout<<successor(max)<<endl;					// 0
+	cout<<successor(min)->d<<endl;				// 21
+	cout<<successor(search(tree,72))->d<<endl;	// 77
+	
 	return 0;
 }
