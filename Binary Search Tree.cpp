@@ -63,6 +63,28 @@ node* successor(node* x){
 	}
 	return y;
 }
+node* delete_node(node* &root, node* x){
+	node* child;
+	if(!x->l&&!x->r)	child = NULL;
+	else if(!x->l){
+		child = x->r;
+		x->r->p = x->p;
+	}
+	else if(!x->r){
+		child = x->l;
+		x->l->p = x->p;
+	}
+	else{
+		node* y = successor(x);
+		delete_node(x,y);
+		y->p = x->p;	y->l = x->l;	y->r = x->r;
+		child = y;
+	}
+	if(!x->p)			root = child;
+	else if(x==x->p->l)	x->p->l = child;
+	else				x->p->r = child;
+	return root;
+}
 int main() {
 	node* tree = NULL;
 	int c;
@@ -91,11 +113,30 @@ int main() {
 	cout<<minimum(max)->d<<endl;	// 86
 	cout<<minimum(min)->d<<endl;	// 15
 	
+	node* sr = search(tree,72);
+	
 	cout<<successor(search_result)->d<<endl;	// 40
 	cout<<successor(tree)->d<<endl;				// 86
 	cout<<successor(max)<<endl;					// 0
 	cout<<successor(min)->d<<endl;				// 21
-	cout<<successor(search(tree,72))->d<<endl;	// 77
+	cout<<successor(sr)->d<<endl;				// 77
+	
+	delete_node(tree,sr);
+	inorder(tree);	cout<<endl;		// 72
+	delete_node(tree,max->l);
+	inorder(tree);	cout<<endl;		// 86
+	delete_node(tree,tree->l);
+	inorder(tree);	cout<<endl;		// 77
+	delete_node(tree,tree->l);
+	inorder(tree);	cout<<endl;		// 15
+	delete_node(tree,tree->l->p->l);
+	inorder(tree);	cout<<endl;		// 35
+	
+	cout<<tree->l->d<<tree->l->l->d<<tree->l->r->d<<tree->l->r->l->l<<tree->l->r->l->d<<endl;
+	// 362149040
+	delete_node(tree,tree);
+	inorder(tree);	cout<<endl;		// 83
+	cout<<tree->d<<tree->l->d<<tree->r->d<<endl;	// 863693
 	
 	return 0;
 }
