@@ -41,6 +41,11 @@ void preorder(node* root){
 	preorder(root->r);
 	return;
 }
+node* search(node* x, int k){
+	if(!x||x->d==k)	return x;
+	if(k<x->d)	return search(x->l,k);
+	else		return search(x->r,k);
+}
 int main() {
 	node* tree = NULL;
 	int c;
@@ -54,5 +59,9 @@ int main() {
 	cout<<endl;
 	preorder(tree);
 	cout<<endl;
+	node* search_result = search(tree,c);
+	cout<<search_result<<endl;
+	cout<<search_result->d<<endl;
+	cout<<search(tree,50)<<endl;
 	return 0;
 }
