@@ -78,7 +78,7 @@ node* delete_node(node* &root, node* x){
 		node* y = successor(x);
 		delete_node(x,y);
 		y->p = x->p;	y->l = x->l;	y->r = x->r;
-		child = y;
+		x->l->p = y;	x->r->p = y;	child = y;
 	}
 	if(!x->p)			root = child;
 	else if(x==x->p->l)	x->p->l = child;
@@ -136,7 +136,7 @@ int main() {
 	// 362149040
 	delete_node(tree,tree);
 	inorder(tree);	cout<<endl;		// 83
-	cout<<tree->d<<tree->l->d<<tree->r->d<<endl;	// 863693
+	cout<<tree->d<<tree->l->d<<tree->r->d<<tree->l->p->d<<tree->r->p->d<<endl;	// 8636938686
 	
 	return 0;
 }
