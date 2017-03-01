@@ -2,8 +2,9 @@
 using namespace std;
 struct node{
 	int d;
+	bool c;		// black:0(false)	red:1(true)
 	node *l, *r, *p;
-	node(int data=0) : d(data), l(NULL), r(NULL), p(NULL){}
+	node(int data=0) : d(data), c(false), l(NULL), r(NULL), p(NULL){}
 };
 // node* insert(node* root, node* x){	// first implementation
 // 	// it returns the root of the tree, which may be changed in this procedure.
@@ -78,11 +79,35 @@ node* delete_node(node* &root, node* x){
 		node* y = successor(x);
 		delete_node(x,y);
 		y->p = x->p;	y->l = x->l;	y->r = x->r;
-		child = y;
+		x->l->p = y;	x->r->p = y;	child = y;
 	}
 	if(!x->p)			root = child;
 	else if(x==x->p->l)	x->p->l = child;
 	else				x->p->r = child;
+	return root;
+}
+node* leftRotate(node* &root, node* x){
+	node* y = x->r;
+	x->r = y->l;
+	if(y->l)	y->l->p = x;
+	y->p = x->p;
+	if(!x->p)			root = y;
+	else if(x==x->p->l)	x->p->l = y;
+	else				x->p->r = y;
+	y->l = x;
+	x->p = y;
+	return root;
+}
+node* rightRotate(node* &root, node* x){
+	node* y = x->l;
+	x->l = y->r;
+	if(y->r)	y->r->p = x;
+	y->p = x->p;
+	if(!x->p)			root = y;
+	else if(x==x->p->l)	x->p->l = y;
+	else				x->p->r = y;
+	y->r = x;
+	x->p = y;
 	return root;
 }
 int main() {
@@ -99,12 +124,12 @@ int main() {
 	preorder(tree);			// tree preorder
 	cout<<endl;
 	
-	node* search_result = search(tree,c);
+	node* search_result = search(tree,c);	// search check
 	cout<<search_result<<endl;
 	cout<<search_result->d<<endl;
 	cout<<search(tree,50)<<endl;
 	
-	node* min = minimum(tree);
+	node* min = minimum(tree);			// min max check
 	node* max = maximum(tree);
 	
 	cout<<min->d<<endl;		// 15
@@ -125,18 +150,31 @@ int main() {
 	inorder(tree);	cout<<endl;		// 72
 	delete_node(tree,max->l);
 	inorder(tree);	cout<<endl;		// 86
+	cout<<max->l->d<<max->l->p->d<<endl;	// 9293
 	delete_node(tree,tree->l);
 	inorder(tree);	cout<<endl;		// 77
+	cout<<tree->l->d<<tree->l->p->d<<endl;	// 1583
 	delete_node(tree,tree->l);
 	inorder(tree);	cout<<endl;		// 15
+	cout<<tree->l->d<<tree->l->p->d<<endl;	// 3583
 	delete_node(tree,tree->l->p->l);
 	inorder(tree);	cout<<endl;		// 35
+	cout<<tree->l->d<<tree->l->p->d<<endl;	// 3683
 	
 	cout<<tree->l->d<<tree->l->l->d<<tree->l->r->d<<tree->l->r->l->l<<tree->l->r->l->d<<endl;
 	// 362149040
 	delete_node(tree,tree);
 	inorder(tree);	cout<<endl;		// 83
-	cout<<tree->d<<tree->l->d<<tree->r->d<<endl;	// 863693
+	cout<<tree->d<<tree->l->d<<tree->r->d<<tree->l->p->d<<tree->r->p->d<<endl;	// 8636938686
+	
+	preorder(tree);	cout<<endl;
+	
+	leftRotate(tree,tree->l);		// rotation check
+	rightRotate(tree,tree->r);
+	
+	preorder(tree);	cout<<endl;
+	
+	cout<<tree->l->d<<tree->r->d<<endl;		// 4992
 	
 	return 0;
 }
